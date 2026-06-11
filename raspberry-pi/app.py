@@ -5,16 +5,17 @@ app = Flask(__name__)
 DB = "data.db"
 
 
-def get_latest():
+def get_latest_metric(metric_name, device_name):
     conn = sqlite3.connect(DB)
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT timestamp, device, metric, value
+    SELECT timestamp, value
     FROM readings
-    ORDER by id DESC
-    LIMIT 1                               
-    """)
+    WHERE metric = ? AND device=?
+    ORDER BY id DESC
+    LIMIT 1
+    """, (metric_name, device_name))
 
     row = cursor.fetchone()
     conn.close()
@@ -24,19 +25,17 @@ def get_latest():
 
 @app.route("/")
 def home():
-    row = get_latest()
+    temperature_info = get_latest_metric("temperature", "esp32_1")
+    humidity_info = get_latest_metric("humidity", "esp32_1")
 
-    if row is None:
-        return "No data yet."
-
-    timestamp, device, metric, value = row
+    temperature = temperature_info[1]
+    humidity = humidity_info[1]
 
     return f"""
-        <h1>IoT Monitor</h1>
-        <p><b>Device:</b> {device}</p>
-        <p><b>Metric:</b> {metric}</p>
-        <p><b>Value:</b> {value}</p>
-        <p><b>Time:</b> {timestamp}</p>
+        <h2>ESP32_1</h2>
+
+        <p>Temperature: {temperature} °C</p>
+        <p>Humidity: {humidity} %</p>
     """
 
 
