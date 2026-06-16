@@ -41,23 +41,39 @@ def latest_data():
 
 @app.route("/")
 def home():
-    temp = get_latest_metric("temperature", "esp32_1")
-    humidity = get_latest_metric("humidity", "esp32_1")
-    cpu_temp = get_latest_metric("cpu_temp", "pi")
-    ram_usage = get_latest_metric("ram_usage", "pi")
-    disk_usage = get_latest_metric("disk_usage", "pi")
-
-    return f"""
+    return """
+        <html>
+        <head> <title> EnvMonitor </title> </head>
+        <body>
         <h2>ESP32_1</h2>
 
-        <p>Temperature: {temp} °C</p>
-        <p>Humidity: {humidity} %</p>
+        <p>Temperature: <span id="temperature"> -- </span> °C</p>
+        <p>Humidity: <span id="humidity"> -- </span> %</p>
         
         <h2>Raspberry Pi</h2>
-        <p>CPU Temperature: {cpu_temp} °C</p>
-        <p>RAM Usage : {ram_usage}%</p>
-        <p>Disk Usage : {disk_usage}%</p>
-    
+        <p>CPU Temperature: <span id="cpu_temp"> -- </span> °C</p>
+        <p>RAM Usage : <span id="ram_usage"> -- </span> %</p>
+        <p>Disk Usage : <span id="disk_usage"> -- </span>%</p>
+
+        <script>
+        async function updateData() {
+            const response = await fetch("/api/latest")
+            const data = await response.json()
+
+            document.getElementById("temperature").innerText = data.esp32_1.temperature
+            document.getElementById("humidity").innerText = data.esp32_1.humidity
+
+            document.getElementById("cpu_temp").innerText = data.pi.cpu_temp
+            document.getElementById("ram_usage").innerText = data.pi.ram_usage
+            document.getElementById("disk_usage").innerText = data.pi.disk_usage
+        }
+
+        updateData();
+        setInterval(updateData, 5000);  
+        </script>
+        
+        </body>
+        </html>
     """
 
 
