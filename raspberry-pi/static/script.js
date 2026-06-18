@@ -22,13 +22,7 @@ setInterval(updateData, 5000);
 let chart;
 let currentPeriod = "24h";
 
-async function loadChart(period = currentPeriod) {
-    currentPeriod = period;
-    const res = await fetch(`/api/history?metric=temperature&device=esp32_1&period=${period}`);
-    const json = await res.json();
-
-    if (chart) chart.destroy();
-
+function initChart() {
     const ctx = document.getElementById("tempChart").getContext("2d");
 
     chart = new Chart(ctx, {
@@ -36,20 +30,35 @@ async function loadChart(period = currentPeriod) {
         data: {
             datasets: [{
                 label: "Temperature",
-                data: json.data,
+                data: [],
                 borderWidth: 2,
                 fill: false
             }]
         },
         options: {
             scales: {
-                x: {
-                    type: "time"
-                }
+                x: { type: "time" }
             }
         }
     });
 }
 
-loadChart("24h");
-setInterval(() => loadChart(), 10000);
+
+async function updateChart() {
+    const res = await fetch(`/api/history?metric=temperature&device=esp32_1&period=${currentPeriod}`);
+    const json = await res.json();
+
+    chart.data.datasets[0].data = json.data;
+    chart.update();
+}
+
+
+function setPeriod(period) {
+    currentPeriod = period;
+    updateChart();
+}
+
+initChart();
+updateChart("24h");
+
+setInterval(() => updateChart(), 10000);
