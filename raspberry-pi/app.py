@@ -1,11 +1,12 @@
 from flask import Flask, request, render_template
 import sqlite3
 from datetime import datetime, timedelta, timezone
+from config import CONFIG
 
 app = Flask(__name__)
-DB = "data.db"
+DB = CONFIG["database"]["filename"]
 
-FRESHNESS_SECONDS = 15
+FRESHNESS_SECONDS = CONFIG["dashboard"]["freshness_seconds"]
 
 
 def get_latest_metric(metric_name, device_name):
@@ -43,22 +44,16 @@ def is_fresh(timestamp):
 
 @app.route("/api/latest")
 def latest_data():
-    temperature, temperature_ts = get_latest_metric("temperature", "esp32_1")
-    humidity, humidity_ts = get_latest_metric("humidity", "esp32_1")
-    cpu_temp, cpu_temp_ts = get_latest_metric("cpu_temp", "pi")
-    ram_usage, ram_usage_ts = get_latest_metric("ram_usage", "pi")
-    disk_usage, disk_usage_ts = get_latest_metric("disk_usage", "pi")
-    return {
-        "esp32_1": {
-            "temperature": temperature if is_fresh(temperature_ts) else None,
-            "humidity": humidity if is_fresh(humidity_ts) else None,
-        },
-        "pi": {
-            "cpu_temp": cpu_temp if is_fresh(cpu_temp_ts) else None,
-            "ram_usage": ram_usage if is_fresh(ram_usage_ts) else None,
-            "disk_usage": disk_usage if is_fresh(disk_usage_ts) else None
-        }
-    }
+    data = {}
+
+    for device_name, device_config in CONFIG["devices"].items():
+        data[device_name] = {}
+        for metric in device_config["metrics"]:
+            value, value_ts = get_latest_metric(metric, device_name)
+            fresh = is_fresh(value_ts)
+            data[device_name][metric] = value if fresh else None
+
+    return data
 
 
 @app.route("/api/history")
@@ -111,4 +106,5 @@ def home():
     return render_template("index.html")
 
 
-app.run(host="0.0.0.0", port=5000)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
