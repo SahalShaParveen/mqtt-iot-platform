@@ -5,6 +5,57 @@ async function loadConfig() {
 }
 
 
+function buildDeviceList() {
+    const select = document.getElementById("deviceSelect");
+    select.innerHTML = "";
+
+    for (const deviceName in CONFIG.devices) {
+        const option = document.createElement("option");
+        option.value = deviceName;
+        option.innerText = deviceName;
+        select.appendChild(option);
+    }
+
+    chartDevice = select.value;
+    select.value = chartDevice;
+}
+
+
+function buildMetricList() {
+    const select = document.getElementById("metricSelect");
+    select.innerHTML = "";
+
+    const metrics = CONFIG.devices[chartDevice].metrics;
+
+    for (const metric of metrics) {
+        const option = document.createElement("option");
+        option.value = metric;
+        option.innerText = metric;
+        select.appendChild(option);
+    }
+
+    chartMetric = select.value;
+    select.value = chartMetric;
+}
+
+
+function deviceChanged() {
+    chartDevice = document.getElementById("deviceSelect").value;
+
+    buildMetricList();
+
+    chartMetric = document.getElementById("metricSelect").value;
+
+    updateChart();
+}
+
+
+function metricChanged() {
+    chartMetric = document.getElementById("metricSelect").value;
+
+    updateChart();
+}
+
 function buildDashboard() {
     const dashboard = document.getElementById("dashboard");
     dashboard.innerHTML = "";
@@ -93,6 +144,7 @@ async function updateChart() {
     const json = await res.json();
 
     chart.data.datasets[0].data = json.data;
+    chart.data.datasets[0].label = chartMetric;
     chart.update();
 }
 
@@ -105,6 +157,8 @@ function setPeriod(period) {
 
 (async function start() {
     await loadConfig();
+    buildDeviceList();
+    buildMetricList();
     buildDashboard();
     initChart();
     updateData();

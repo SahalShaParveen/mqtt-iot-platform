@@ -14,6 +14,12 @@
     <button onclick="setPeriod('24h')">Last 24h</button>
     <button onclick="setPeriod('7d')">Week</button>
 
+    <label>Device:</label>
+    <select id="deviceSelect" onchange="deviceChanged()"></select>
+
+    <label>Metric:</label>
+    <select id="metricSelect" onchange="metricChanged()"></select>
+
     <canvas id="tempChart"></canvas>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
