@@ -2,11 +2,12 @@ import paho.mqtt.client as mqtt
 import sqlite3
 import json
 from datetime import datetime, UTC
+from config import CONFIG
 
-BROKER = "localhost"
+BROKER = CONFIG["mqtt"]["broker"]
 TOPIC = "sensors/#"
 
-conn = sqlite3.connect("data.db")
+conn = sqlite3.connect(CONFIG["database"]["filename"])
 cursor = conn.cursor()
 
 
