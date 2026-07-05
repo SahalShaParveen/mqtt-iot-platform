@@ -2,26 +2,30 @@
 set -e
 
 INSTALL_DIR=$(realpath "$(dirname "$0")")
-PYTHON=$(which python3)
+VENV_DIR="$INSTALL_DIR/venv"
+PYTHON="$VENV_DIR/bin/python"
+PIP="$VENV_DIR/bin/pip"
 USER_NAME=${SUDO_USER:-$USER}
-
 
 echo "Installing system packages..."
 sudo apt update
 sudo apt install -y \
     python3 \
-    python3-pip \
+    python3-venv \
     mosquitto \
     mosquitto-clients
 
-echo "Installing Python packages..."
+echo "Creating virtual environment..."
+python3 -m venv "$VENV_DIR"
 
-$PYTHON -m pip install -r requirements.txt
+echo "Upgrading pip..."
+"$PIP" install --upgrade pip
+
+echo "Installing Python packages..."
+"$PIP" install -r requirements.txt
 
 echo "Initialising database..."
-python3 init_db.py
-
-echo "Installing services..."
+"$PYTHON" init_db.py
 
 echo "Creating systemd service files..."
 
@@ -75,6 +79,7 @@ Restart=always
 WantedBy=multi-user.target
 EOF
 
+echo "Reloading systemd..."
 sudo systemctl daemon-reload
 
 sudo systemctl enable mosquitto
