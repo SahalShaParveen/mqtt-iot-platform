@@ -38,7 +38,7 @@ After=network.target mosquitto.service
 Type=simple
 User=$USER_NAME
 WorkingDirectory=$INSTALL_DIR
-ExecStart=$PYTHON $INSTALL_DIR/subscriber.py
+ExecStart=$PYTHON $INSTALL_DIR/raspberry-pi/subscriber.py
 Restart=always
 
 [Install]
@@ -55,7 +55,7 @@ After=network.target
 Type=simple
 User=$USER_NAME
 WorkingDirectory=$INSTALL_DIR
-ExecStart=$PYTHON $INSTALL_DIR/app.py
+ExecStart=$PYTHON $INSTALL_DIR/raspberry-pi/app.py
 Restart=always
 
 [Install]
@@ -72,7 +72,7 @@ After=network.target mosquitto.service
 Type=simple
 User=$USER_NAME
 WorkingDirectory=$INSTALL_DIR
-ExecStart=$PYTHON $INSTALL_DIR/pi_publisher.py
+ExecStart=$PYTHON $INSTALL_DIR/raspberry-pi/pi_publisher.py
 Restart=always
 
 [Install]
