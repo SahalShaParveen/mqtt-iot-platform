@@ -25,7 +25,7 @@ echo "Installing Python packages..."
 "$PIP" install -r requirements.txt
 
 echo "Initialising database..."
-"$PYTHON" init_db.py
+"$PYTHON" "$INSTALL_DIR/raspberry-pi/init_db.py"
 
 echo "Creating systemd service files..."
 
