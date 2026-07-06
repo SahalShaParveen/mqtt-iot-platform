@@ -1,0 +1,133 @@
+# MQTT IoT Platform
+
+## Overview
+
+This project is a modular MQTT-based IoT platform centred around a Raspberry Pi. It provides the infrastructure required to receive telemetry from embedded devices, persist it locally, and expose it for visualisation and further processing.
+
+The included ESP32 + DHT11 firmware serves as a reference implementation. Any device capable of publishing JSON messages over MQTT can be integrated with minimal changes.
+
+---
+
+## Features
+
+* MQTT broker hosted on Raspberry Pi (Mosquitto)
+* Automatic service installation via `setup.sh`
+* ESP32 reference firmware using ArduinoJson
+* Automatic ingestion of MQTT messages
+* SQLite storage
+* Python-based backend
+* Extensible architecture for additional sensors and actuators
+
+---
+
+## Hardware
+
+Current reference hardware:
+
+* Raspberry Pi
+* ESP32 development board
+* DHT11 temperature & humidity sensor
+
+The platform is not limited to these devices.
+
+---
+
+## Installation
+
+Clone the repository and run:
+
+```bash
+chmod +x setup.sh
+./setup.sh
+```
+
+The installation script automatically:
+
+* installs system packages
+* creates a Python virtual environment
+* installs Python dependencies
+* initializes the SQLite database
+* creates and enables the required systemd services
+* starts Mosquitto and all project services
+
+No manual configuration on the Raspberry Pi is required beyond editing configuration files (for example MQTT server addresses or Wi-Fi credentials where appropriate).
+
+---
+
+## Running
+
+After installation, the platform starts automatically at boot.
+
+Service status can be checked with:
+
+```bash
+systemctl status envmonitor-subscriber
+systemctl status envmonitor-pi-publisher
+systemctl status envmonitor-web
+```
+
+To restart a service:
+
+```bash
+sudo systemctl restart envmonitor-subscriber
+```
+
+---
+
+## MQTT Topics
+
+Current convention:
+
+```text
+sensors/<device_id>
+```
+
+Examples:
+
+```text
+sensors/esp32_1
+sensors/pi
+```
+
+Payloads are JSON objects containing one or more sensor values.
+
+Example:
+
+```json
+{
+    "temperature": 24.8,
+    "humidity": 43
+}
+```
+
+## Adding a New Device
+
+Adding another device typically requires only:
+
+1. Configure the device to connect to the MQTT broker.
+2. Publish JSON to a unique topic:
+
+```
+sensors/<device_id>
+```
+
+No changes to the subscriber are required. New metrics are automatically stored in SQLite.
+
+---
+
+## Architecture
+
+![Architecture](images/architecture.png)
+---
+
+## Project Purpose
+
+This project demonstrates:
+
+* embedded systems integration
+* MQTT messaging
+* distributed IoT architecture
+* local telemetry collection
+* persistent storage
+* web-based data presentation
+* scalable system design
