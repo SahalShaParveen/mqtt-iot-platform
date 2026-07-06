@@ -6,7 +6,13 @@ This project is a modular MQTT-based IoT platform centred around a Raspberry Pi.
 
 The included ESP32 + DHT11 firmware serves as a reference implementation. Any device capable of publishing JSON messages over MQTT can be integrated with minimal changes.
 
----
+## Architecture
+
+![Architecture](images/architecture.png)
+
+## Project Purpose
+
+Although the current implementation demonstrates environmental monitoring using a DHT11 sensor, the project was designed as a reusable IoT platform. Any device capable of publishing JSON over MQTT can be integrated without modifying the backend.
 
 ## Features
 
@@ -15,10 +21,18 @@ The included ESP32 + DHT11 firmware serves as a reference implementation. Any de
 * ESP32 reference firmware using ArduinoJson
 * Automatic ingestion of MQTT messages
 * SQLite storage
+* Flask web dashboard and JSON API
 * Python-based backend
+* Automatic deployment via setup.sh and systemd
 * Extensible architecture for additional sensors and actuators
 
----
+## Tech Stack
+
+- **Embedded:** ESP32, Arduino
+- **Messaging:** MQTT (Mosquitto)
+- **Backend:** Python, Paho MQTT, Flask
+- **Database:** SQLite
+- **Frontend:** HTML, JavaScript, Chart.js
 
 ## Hardware
 
@@ -30,11 +44,9 @@ Current reference hardware:
 
 The platform is not limited to these devices.
 
----
-
 ## Installation
 
-Clone the repository and run:
+Clone the repository on the Raspberry Pi (or any other linux computer) and run:
 
 ```bash
 chmod +x setup.sh
@@ -52,7 +64,7 @@ The installation script automatically:
 
 No manual configuration on the Raspberry Pi is required beyond editing configuration files (for example MQTT server addresses or Wi-Fi credentials where appropriate).
 
----
+On the ESP32 (if using given code), add a file named `secrets.h` using the `secrets_template.h` provided as a reference, to store wifi ssid, password and the pi's IP address. Using `<piUsername>.local` is suggested instead of actual ip address. 
 
 ## Running
 
@@ -113,21 +125,3 @@ sensors/<device_id>
 
 No changes to the subscriber are required. New metrics are automatically stored in SQLite.
 
----
-
-## Architecture
-
-![Architecture](images/architecture.png)
----
-
-## Project Purpose
-
-This project demonstrates:
-
-* embedded systems integration
-* MQTT messaging
-* distributed IoT architecture
-* local telemetry collection
-* persistent storage
-* web-based data presentation
-* scalable system design
