@@ -125,3 +125,17 @@ sensors/<device_id>
 
 No changes to the subscriber are required. New metrics are automatically stored in SQLite.
 
+## Uninstallation
+
+To remove the project services from the system:
+
+```bash
+chmod +x uninstall.sh
+./uninstall.sh
+```
+
+This stops and disables the systemd services, removes their service files, and reloads the systemd daemon.
+
+The script does **not** remove the project directory, the Python virtual environment, the SQLite database or the system packages
+
+These can be removed manually if no longer required.
