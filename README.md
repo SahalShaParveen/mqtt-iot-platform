@@ -2,9 +2,9 @@
 
 ## Overview
 
-This project is a modular MQTT-based IoT platform centred around a Raspberry Pi. It provides the infrastructure required to receive telemetry from embedded devices, persist it locally, and expose it for visualisation and further processing.
+This project is an MQTT-based IoT platform built around a Raspberry Pi. It listens for telemetry from connected devices, stores the data locally, and makes it easy to visualise or use elsewhere.
 
-The included ESP32 + DHT11 firmware serves as a reference implementation. Any device capable of publishing JSON messages over MQTT can be integrated with minimal changes.
+The included ESP32 + DHT11 firmware is just an example of how a device can talk to the platform. As long as a device can publish JSON over MQTT, it should be straightforward to integrate.
 
 ## Architecture
 
@@ -12,7 +12,7 @@ The included ESP32 + DHT11 firmware serves as a reference implementation. Any de
 
 ## Project Purpose
 
-Although the current implementation demonstrates environmental monitoring using a DHT11 sensor, the project was designed as a reusable IoT platform. Any device capable of publishing JSON over MQTT can be integrated without modifying the backend.
+Although the current implementation demonstrates environmental monitoring using a DHT11 sensor, the project was designed as a reusable IoT platform. Any device that is capable of publishing JSON over MQTT can be integrated without needing to modify the backend.
 
 ## Features
 
@@ -62,9 +62,9 @@ The installation script automatically:
 * creates and enables the required systemd services
 * starts Mosquitto and all project services
 
-No manual configuration on the Raspberry Pi is required beyond editing configuration files (for example MQTT server addresses or Wi-Fi credentials where appropriate).
+No manual configuration on the Raspberry Pi is required other than editing configuration files (for example MQTT server addresses or Wi-Fi credentials).
 
-On the ESP32 (if using given code), add a file named `secrets.h` using the `secrets_template.h` provided as a reference, to store wifi ssid, password and the pi's IP address. Using `<piUsername>.local` is suggested instead of actual ip address. 
+On the ESP32 (if using the given code), add a file named `secrets.h` using the `secrets_template.h` provided as a reference, to store wifi ssid, password and the pi's IP address. Using `<piUsername>.local` is suggested instead of actual ip address. 
 
 ## Running
 
@@ -138,4 +138,4 @@ This stops and disables the systemd services, removes their service files, and r
 
 The script does **not** remove the project directory, the Python virtual environment, the SQLite database or the system packages
 
-These can be removed manually if no longer required.
+These can be removed manually if no longer needed.
